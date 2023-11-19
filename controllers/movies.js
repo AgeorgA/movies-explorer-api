@@ -1,6 +1,7 @@
 const { ValidationError, CastError } = require('mongoose').Error;
 const Movie = require('../models/movie');
 const statusCodes = require('../utils/constants').HTTP_STATUS;
+const { message } = require('../utils/constants');
 const NotFoundError = require('../errors/NotFound');
 const BadRequestError = require('../errors/BadRequest');
 const ForbiddenError = require('../errors/Forbidden');
@@ -43,33 +44,25 @@ module.exports.createMovie = (req, res, next) => {
     .then((movie) => res.status(statusCodes.CREATED).send(movie))
     .catch((error) => {
       if (error instanceof ValidationError) {
-        return next(
-          new BadRequestError(
-            'Переданы некорректные данные при создании карточки',
-          ),
-        );
+        return next(new BadRequestError(message.CreateMovieMessage));
       }
       return next(error);
     });
 };
 
-module.exports.deleteCard = (req, res, next) => {
+module.exports.deleteMovie = (req, res, next) => {
   Movie.findById(req.params.movieId)
 
     .orFail(new NotFoundError('NotFound'))
     .then((movie) => {
       if (movie.owner.toString() !== req.user._id) {
-        return next(
-          new ForbiddenError(
-            'Вы не являетесь обладателем карточки, поэтому не можете ее удалить',
-          ),
-        );
+        return next(new ForbiddenError(message.DeleteMovieMessage));
       }
       return Movie.deleteOne(movie).then(() => res.status(statusCodes.OK).send(movie));
     })
     .catch((error) => {
       if (error instanceof CastError) {
-        return next(new BadRequestError('Переданы некорректные данные'));
+        return next(new BadRequestError(message.BadRequestMessage));
       }
       return next(error);
     });

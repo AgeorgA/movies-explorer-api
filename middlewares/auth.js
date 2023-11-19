@@ -1,11 +1,11 @@
 require('dotenv').config();
 const jwt = require('jsonwebtoken');
 const UnauthorizedError = require('../errors/Unauthorized');
-
-const JWT_SECRET = process.env.NODE_ENV === 'production' ? process.env.JWT_SECRET : 'dev-secret';
+const { message } = require('../utils/constants');
+const { JWT_SECRET } = require('../utils/config');
 
 const handleAuthError = (res, next) => {
-  next(new UnauthorizedError('Необходима авторизация'));
+  next(new UnauthorizedError(message.unauthorizedMessage));
 };
 const extractBearerToken = (header) => header.replace('Bearer ', '');
 

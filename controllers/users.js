@@ -5,11 +5,11 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const User = require('../models/user');
 const statusCodes = require('../utils/constants').HTTP_STATUS;
+const { message } = require('../utils/constants');
+const { JWT_SECRET } = require('../utils/config');
 const NotFoundError = require('../errors/NotFound');
 const BadRequestError = require('../errors/BadRequest');
 const ConflictError = require('../errors/Conflict');
-
-const JWT_SECRET = process.env.NODE_ENV === 'production' ? process.env.JWT_SECRET : 'dev-secret';
 
 module.exports.createUser = (req, res, next) => {
   const { name, email, password } = req.body;
@@ -26,14 +26,10 @@ module.exports.createUser = (req, res, next) => {
     }))
     .catch((error) => {
       if (error instanceof ValidationError) {
-        return next(
-          new BadRequestError(
-            'Переданы некорректные данные при создании пользователя',
-          ),
-        );
+        return next(new BadRequestError(message.BadRequestMessage));
       }
       if (error.code === 11000) {
-        return next(new ConflictError('Учетная запись уже существует'));
+        return next(new ConflictError(message.ConflictMessage));
       }
       return next(error);
     });
@@ -46,11 +42,7 @@ function updateUser(req, res, newData, next) {
     .then((user) => res.status(statusCodes.CREATED).send(user))
     .catch((error) => {
       if (error instanceof CastError) {
-        return next(
-          new BadRequestError(
-            'Переданы некорректные данные при обновлении профиля',
-          ),
-        );
+        return next(new BadRequestError(message.UpdateUserMessage));
       }
       return next(error);
     });
