@@ -35,10 +35,18 @@ module.exports.createUser = (req, res, next) => {
     });
 };
 
+module.exports.getCurrentUser = (req, res, next) => {
+  const userId = req.user._id;
+  User.findById(userId)
+    .orFail(new NotFoundError(message.NotFoundMessage))
+    .then((user) => res.status(statusCodes.OK).send(user))
+    .catch(next);
+};
+
 function updateUser(req, res, newData, next) {
   const userId = req.user._id;
   User.findByIdAndUpdate(userId, newData, { new: true, runValidators: true })
-    .orFail(new NotFoundError('NotFound'))
+    .orFail(new NotFoundError(message.NotFoundMessage))
     .then((user) => res.status(statusCodes.CREATED).send(user))
     .catch((error) => {
       if (error instanceof CastError) {

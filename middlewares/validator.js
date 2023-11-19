@@ -1,7 +1,5 @@
 const { celebrate, Joi } = require('celebrate');
 
-const httpCheck = require('../utils/constants');
-
 const createMovieValid = celebrate({
   body: Joi.object().keys({
     country: Joi.string().required(),
@@ -9,9 +7,9 @@ const createMovieValid = celebrate({
     duration: Joi.number().required(),
     year: Joi.number().required(),
     description: Joi.string().required(),
-    image: Joi.string().pattern(httpCheck).required(),
-    trailerLink: Joi.string().pattern(httpCheck).required(),
-    thumbnail: Joi.string().pattern(httpCheck).required(),
+    image: Joi.string().required(),
+    trailerLink: Joi.string().required(),
+    thumbnail: Joi.string().required(),
     movieId: Joi.number().required(),
     nameRU: Joi.string().required(),
     nameEN: Joi.string().required(),

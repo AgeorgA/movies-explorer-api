@@ -20,6 +20,7 @@ const message = {
   limiterMessage: 'Превышено количество запросов на сервер.',
   loginValidMessage: 'Неправильные почта или пароль',
   pageNotFoundMessage: 'Страница не найдена',
+  NotFoundMessage: 'Не найдено',
 };
 
 const statusCode = {
