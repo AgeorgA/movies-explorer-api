@@ -8,11 +8,5 @@ module.exports = (err, req, res, next) => {
       .status(statusCode.INTERNAL_SERVER_ERROR)
       .send({ message: message.ServerErrorMessage });
   }
-  res.status(err.statusCode).send({
-    message:
-      err.statusCode === statusCode.errorServer
-        ? message.serverError
-        : err.message,
-  });
   next();
 };
