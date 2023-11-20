@@ -1,15 +1,15 @@
-require("dotenv").config();
-const express = require("express");
-const mongoose = require("mongoose");
-const { errors } = require("celebrate");
-const bodyParser = require("body-parser");
-const cors = require("cors");
-const helmet = require("helmet");
-const { MONGO_URL, PORT } = require("./utils/config");
-const router = require("./router/index");
-const { requestLogger, errorLogger } = require("./middlewares/logger");
-const limiter = require("./middlewares/rateLimiter");
-const serverError = require("./middlewares/serverError");
+require('dotenv').config();
+const express = require('express');
+const mongoose = require('mongoose');
+const { errors } = require('celebrate');
+const bodyParser = require('body-parser');
+const cors = require('cors');
+const helmet = require('helmet');
+const { MONGO_URL, PORT } = require('./utils/config');
+const router = require('./router/index');
+const { requestLogger, errorLogger } = require('./middlewares/logger');
+const limiter = require('./middlewares/rateLimiter');
+const serverError = require('./middlewares/serverError');
 
 const app = express();
 app.use(cors());
