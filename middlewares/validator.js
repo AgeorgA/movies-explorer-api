@@ -21,11 +21,6 @@ const deleteMovieValid = celebrate({
     movieId: Joi.string().length(24).hex().required(),
   }),
 });
-const getCurrentUserValid = celebrate({
-  params: Joi.object().keys({
-    userId: Joi.string().length(24).hex().required(),
-  }),
-});
 
 const updateUserValid = celebrate({
   body: Joi.object().keys({
@@ -52,7 +47,7 @@ module.exports = {
   createUserValid,
   loginValid,
   updateUserValid,
-  getCurrentUserValid,
+
   deleteMovieValid,
   createMovieValid,
 };

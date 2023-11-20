@@ -1,14 +1,15 @@
 const { ValidationError, CastError } = require('mongoose').Error;
 const Movie = require('../models/movie');
-const statusCodes = require('../utils/constants').HTTP_STATUS;
+const statusCodes = require('../utils/constants');
 const { message } = require('../utils/constants');
 const NotFoundError = require('../errors/NotFound');
 const BadRequestError = require('../errors/BadRequest');
 const ForbiddenError = require('../errors/Forbidden');
 
 module.exports.getMovies = (req, res, next) => {
-  Movie.find({})
-    .then((movies) => res.status(statusCodes.OK).send(movies))
+  const owner = req.user._id;
+  Movie.find({ owner })
+    .then((movies) => res.status(statusCodes.OK_CODE).send(movies))
     .catch(next);
 };
 
@@ -41,7 +42,7 @@ module.exports.createMovie = (req, res, next) => {
     nameEN,
     owner,
   })
-    .then((movie) => res.status(statusCodes.CREATED).send(movie))
+    .then((movie) => res.status(statusCodes.CREATED_CODE).send(movie))
     .catch((error) => {
       if (error instanceof ValidationError) {
         return next(new BadRequestError(message.CreateMovieMessage));
@@ -58,7 +59,7 @@ module.exports.deleteMovie = (req, res, next) => {
       if (movie.owner.toString() !== req.user._id) {
         return next(new ForbiddenError(message.DeleteMovieMessage));
       }
-      return Movie.deleteOne(movie).then(() => res.status(statusCodes.OK).send(movie));
+      return Movie.deleteOne(movie).then(() => res.status(statusCodes.OK_CODE).send(movie));
     })
     .catch((error) => {
       if (error instanceof CastError) {

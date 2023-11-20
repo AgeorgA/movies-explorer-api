@@ -4,7 +4,7 @@ const { ValidationError, CastError } = require('mongoose').Error;
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const User = require('../models/user');
-const statusCodes = require('../utils/constants').HTTP_STATUS;
+const statusCodes = require('../utils/constants');
 const { message } = require('../utils/constants');
 const { JWT_SECRET } = require('../utils/config');
 const NotFoundError = require('../errors/NotFound');
@@ -20,7 +20,7 @@ module.exports.createUser = (req, res, next) => {
       email,
       password: hash,
     }))
-    .then((user) => res.status(statusCodes.CREATED).send({
+    .then((user) => res.status(statusCodes.CREATED_CODE).send({
       name: user.name,
       email: user.email,
     }))
@@ -39,26 +39,26 @@ module.exports.getCurrentUser = (req, res, next) => {
   const userId = req.user._id;
   User.findById(userId)
     .orFail(new NotFoundError(message.NotFoundMessage))
-    .then((user) => res.status(statusCodes.OK).send(user))
+    .then((user) => res.status(statusCodes.OK_CODE).send(user))
     .catch(next);
 };
 
-function updateUser(req, res, newData, next) {
+module.exports.updateUser = (req, res, next) => {
   const userId = req.user._id;
-  User.findByIdAndUpdate(userId, newData, { new: true, runValidators: true })
+  const { name, email } = req.body;
+  User.findByIdAndUpdate(
+    userId,
+    { name, email },
+    { new: true, runValidators: true },
+  )
     .orFail(new NotFoundError(message.NotFoundMessage))
-    .then((user) => res.status(statusCodes.CREATED).send(user))
+    .then((user) => res.status(statusCodes.CREATED_CODE).send(user))
     .catch((error) => {
       if (error instanceof CastError) {
         return next(new BadRequestError(message.UpdateUserMessage));
       }
       return next(error);
     });
-}
-
-module.exports.updateProfile = (req, res) => {
-  const { name, email } = req.body;
-  updateUser(req, res, { name, email });
 };
 
 module.exports.login = (req, res, next) => {

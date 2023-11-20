@@ -21,17 +21,18 @@ const message = {
   loginValidMessage: 'Неправильные почта или пароль',
   pageNotFoundMessage: 'Страница не найдена',
   NotFoundMessage: 'Не найдено',
+  ServerErrorMessage: 'Произошла ошибка на сервере',
 };
 
 const statusCode = {
-  dataError: 400,
-  authError: 401,
-  accessIsDenied: 403,
-  errorNotFound: 404,
-  dataDublicate: 409,
-  errorServer: 500,
-  successDone: 200,
-  successCreate: 201,
+  BAD_REQUEST_ERROR: 400,
+  UNAUTHORIZED_ERROR: 401,
+  FORBIDDEN_ERROR: 403,
+  NOT_FOUND_ERROR: 404,
+  CONFLICT_ERROR: 409,
+  INTERNAL_SERVER_ERROR: 500,
+  OK_CODE: 200,
+  CREATED_CODE: 201,
 };
 
 module.exports = {

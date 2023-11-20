@@ -13,12 +13,11 @@ const limiter = require('./middlewares/rateLimiter');
 const app = express();
 app.use(cors());
 app.use(limiter);
-app.use(express.json());
-app.use(requestLogger);
 app.use(helmet());
 app.use(bodyParser.json());
+app.use(express.json());
+app.use(requestLogger);
 app.use(bodyParser.urlencoded({ extended: true }));
-
 app.use(router);
 app.use(errorLogger);
 app.use(errors());
