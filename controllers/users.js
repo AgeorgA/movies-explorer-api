@@ -1,29 +1,33 @@
-require('dotenv').config();
+require("dotenv").config();
 
-const { ValidationError, CastError } = require('mongoose').Error;
-const bcrypt = require('bcrypt');
-const jwt = require('jsonwebtoken');
-const User = require('../models/user');
-const statusCodes = require('../utils/constants');
-const { message } = require('../utils/constants');
-const { JWT_SECRET } = require('../utils/config');
-const NotFoundError = require('../errors/NotFound');
-const BadRequestError = require('../errors/BadRequest');
-const ConflictError = require('../errors/Conflict');
+const { ValidationError, CastError } = require("mongoose").Error;
+const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
+const User = require("../models/user");
+const statusCodes = require("../utils/constants");
+const { message } = require("../utils/constants");
+const { JWT_SECRET } = require("../utils/config");
+const NotFoundError = require("../errors/NotFound");
+const BadRequestError = require("../errors/BadRequest");
+const ConflictError = require("../errors/Conflict");
 
 module.exports.createUser = (req, res, next) => {
   const { name, email, password } = req.body;
   bcrypt
     .hash(password, 10)
-    .then((hash) => User.create({
-      name,
-      email,
-      password: hash,
-    }))
-    .then((user) => res.status(statusCodes.CREATED_CODE).send({
-      name: user.name,
-      email: user.email,
-    }))
+    .then((hash) =>
+      User.create({
+        name,
+        email,
+        password: hash,
+      })
+    )
+    .then((user) =>
+      res.status(statusCodes.CREATED_CODE).send({
+        name: user.name,
+        email: user.email,
+      })
+    )
     .catch((error) => {
       if (error instanceof ValidationError) {
         return next(new BadRequestError(message.BadRequestMessage));
@@ -49,10 +53,10 @@ module.exports.updateUser = (req, res, next) => {
   User.findByIdAndUpdate(
     userId,
     { name, email },
-    { new: true, runValidators: true },
+    { new: true, runValidators: true }
   )
     .orFail(new NotFoundError(message.NotFoundMessage))
-    .then((user) => res.status(statusCodes.CREATED_CODE).send(user))
+    .then((user) => res.send(user))
     .catch((error) => {
       if (error instanceof CastError) {
         return next(new BadRequestError(message.UpdateUserMessage));
@@ -67,7 +71,7 @@ module.exports.login = (req, res, next) => {
     .then((user) => {
       res.status(200).send({
         token: jwt.sign({ _id: user._id }, JWT_SECRET, {
-          expiresIn: '7d',
+          expiresIn: "7d",
         }),
       });
     })
