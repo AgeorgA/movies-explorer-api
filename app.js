@@ -13,7 +13,17 @@ const limiter = require('./middlewares/rateLimiter');
 const serverError = require('./middlewares/serverError');
 
 const app = express();
-app.use(cors());
+app.use(
+  cors({
+    origin: [
+      'http://localhost',
+      'https://mvaea.nomoredomainsmonster.ru/',
+      'http://mvaea.nomoredomainsmonster.ru',
+    ],
+    credentials: true,
+    optionsSuccessStatus: 200,
+  }),
+);
 app.use(limiter);
 app.use(helmet());
 app.use(bodyParser.json());
