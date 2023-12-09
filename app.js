@@ -17,7 +17,7 @@ app.use(
   cors({
     origin: [
       'http://localhost',
-      'https://mvaea.nomoredomainsmonster.ru/',
+      'https://mvaea.nomoredomainsmonster.ru',
       'http://mvaea.nomoredomainsmonster.ru',
     ],
     credentials: true,
