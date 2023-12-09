@@ -20,10 +20,15 @@ module.exports.createUser = (req, res, next) => {
       email,
       password: hash,
     }))
-    .then((user) => res.status(statusCodes.CREATED_CODE).send({
-      name: user.name,
-      email: user.email,
-    }))
+    .then((user) => {
+      const { _id } = user;
+
+      res.status(statusCodes.CREATED_CODE).send({
+        name,
+        email,
+        _id,
+      });
+    })
     .catch((error) => {
       if (error instanceof ValidationError) {
         return next(new BadRequestError(message.BadRequestMessage));
