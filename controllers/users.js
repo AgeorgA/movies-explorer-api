@@ -12,35 +12,37 @@ const BadRequestError = require('../errors/BadRequest');
 const ConflictError = require('../errors/Conflict');
 
 module.exports.createUser = (req, res, next) => {
-  const { name, email, password } = req.body;
+  const { email, name } = req.body;
   bcrypt
-    .hash(password, 10)
-    .then((hash) => User.create({
-      name,
-      email,
-      password: hash,
-    }))
-    .then((user) => {
-      const { _id } = user;
-
-      res.status(statusCodes.CREATED_CODE).send({
-        name,
+    .hash(req.body.password, 10)
+    .then((hash) => {
+      User.create({
         email,
-        _id,
-      });
+        password: hash,
+        name,
+      })
+        .then((user) => {
+          const { _id } = user;
+          res.status(statusCodes.CREATED_CODE).send({
+            name,
+            email,
+            _id,
+          });
+        })
+        .catch((error) => {
+          if (error instanceof ValidationError) {
+            return next(new BadRequestError(message.BadRequestMessage));
+          }
+          if (error.code === 11000) {
+            return next(new ConflictError(message.ConflictMessage));
+          }
+          return next(error);
+        });
     })
-    .catch((error) => {
-      if (error instanceof ValidationError) {
-        return next(new BadRequestError(message.BadRequestMessage));
-      }
-      if (error.code === 11000) {
-        return next(new ConflictError(message.ConflictMessage));
-      }
-      return next(error);
-    });
+    .catch(next);
 };
 
-module.exports.getCurrentUser = (req, res, next) => {
+module.exports.getUser = (req, res, next) => {
   const userId = req.user._id;
   User.findById(userId)
     .orFail(new NotFoundError(message.NotFoundMessage))
@@ -82,4 +84,14 @@ module.exports.login = (req, res, next) => {
         .send({ token });
     })
     .catch(next);
+};
+
+module.exports.logoutUser = (req, res, next) => {
+  try {
+    res
+      .clearCookie('jwt', { httpOnly: true })
+      .send({ exit: 'Выход пользователя из системы успешен' });
+  } catch (err) {
+    next(err);
+  }
 };
