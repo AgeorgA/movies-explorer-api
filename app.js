@@ -16,7 +16,7 @@ const app = express();
 app.use(
   cors({
     origin: [
-      'http://localhost',
+      'http://localhost:3000',
       'https://mvaea.nomoredomainsmonster.ru',
       'http://mvaea.nomoredomainsmonster.ru',
     ],

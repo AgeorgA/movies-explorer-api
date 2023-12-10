@@ -7,15 +7,13 @@ const { JWT_SECRET } = require('../utils/config');
 const handleAuthError = (res, next) => {
   next(new UnauthorizedError(message.unauthorizedMessage));
 };
-const extractBearerToken = (header) => header.replace('Bearer ', '');
 
 module.exports = (req, res, next) => {
-  const { authorization } = req.headers;
+  const token = req.cookies.jwt;
 
-  if (!authorization || !authorization.startsWith('Bearer ')) {
+  if (!token) {
     return handleAuthError(res, next);
   }
-  const token = extractBearerToken(authorization);
   let payload;
   try {
     payload = jwt.verify(token, JWT_SECRET);
